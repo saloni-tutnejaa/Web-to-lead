@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;500;900&display=swap" rel="stylesheet">
+  <title>Free Property Valuation | Store Capital</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', Arial, sans-serif;
+      font-weight: 300;
+      background: #f0f4f7;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 24px 16px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 4px;
+      box-shadow: 0 2px 20px rgba(0,59,92,0.10);
+      padding: 36px 32px;
+      width: 100%;
+      max-width: 520px;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 0; }
+      .card { border-radius: 0; box-shadow: none; padding: 24px 20px; min-height: 100vh; }
+    }
+
+    .logo-area { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 2px solid #003B5C; }
+    .logo-area img { height: 48px; width: auto; max-width: 100%; }
+
+    .hero { background: #003B5C; border-radius: 3px; padding: 18px 20px; margin-bottom: 24px; }
+    .hero-label { font-size: 10px; font-weight: 500; text-transform: uppercase; color: #967126; margin-bottom: 6px; letter-spacing: 1.5px; }
+    .hero h1 { font-size: clamp(16px, 4vw, 20px); font-weight: 900; color: #fff; letter-spacing: 0.3px; margin-bottom: 6px; line-height: 1.3; }
+    .hero p { font-size: 13px; font-weight: 300; color: #a8c0d0; line-height: 1.5; }
+
+    .section-title { font-size: 10px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: #967126; margin-bottom: 14px; }
+
+    .row { display: flex; gap: 14px; }
+    @media (max-width: 480px) {
+      .row { flex-direction: column; gap: 0; }
+      .row .field[style] { max-width: none !important; }
+    }
+
+    .field { display: flex; flex-direction: column; margin-bottom: 16px; flex: 1; position: relative; }
+
+    label { font-size: 11px; font-weight: 500; color: #003B5C; margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; }
+    label .req { color: #967126; margin-left: 2px; }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"] {
+      border: 1px solid #c5d4dd;
+      border-radius: 4px;
+      padding: 13px;
+      font-family: 'DM Sans', Arial, sans-serif;
+      font-weight: 300;
+      font-size: 16px;
+      color: #111827;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      width: 100%;
+      background: #fafcfd;
+      -webkit-appearance: none;
+    }
+
+    input:focus { border-color: #003B5C; box-shadow: 0 0 0 3px rgba(0,59,92,0.08); background: #fff; }
+    input.touched:valid { border-color: #2e7d52; background: #f6fdf9; }
+    input.touched:invalid { border-color: #c0392b; background: #fdf6f6; box-shadow: 0 0 0 3px rgba(192,57,43,0.07); }
+
+    .error-msg { font-size: 10px; color: #c0392b; margin-top: 4px; min-height: 14px; display: none; }
+    input.touched:invalid + .error-msg { display: block; }
+
+    /* State field uppercase */
+    #state_code { text-transform: uppercase; }
+    #state_code::placeholder { text-transform: none; font-weight: 300; }
+
+    .divider { height: 1px; background: #e8eef2; margin: 4px 0 20px; }
+
+    .submit-btn {
+      width: 100%; padding: 16px; background: #967126; color: #fff;
+      font-family: 'DM Sans', Arial, sans-serif; font-size: 14px; font-weight: 500;
+      letter-spacing: 1.5px; text-transform: uppercase; border: none; border-radius: 4px;
+      cursor: pointer; margin-top: 6px; transition: background 0.2s;
+      -webkit-appearance: none; touch-action: manipulation;
+    }
+    .submit-btn:hover { background: #7d5e1f; }
+    .submit-btn:active { background: #5e4717; transform: scale(0.99); }
+
+    .privacy { text-align: center; font-size: 11px; font-weight: 300; color: #9ca3af; margin-top: 16px; line-height: 1.5; }
+    .required-note { font-size: 11px; color: #9ca3af; margin-bottom: 18px; }
+    .required-note span { color: #967126; }
+  </style>
+</head>
+<body>
+  <div class="card">
+
+    <div class="logo-area">
+      <img src="STORE_logo_Full.png" alt="Store Capital">
+    </div>
+
+    <div class="hero">
+      <div class="hero-label">Limited Time Offer</div>
+      <h1>Get Your Free Property Valuation</h1>
+      <p>Find out what your commercial property is worth. Our team will provide a no-obligation valuation within 48 hours.</p>
+    </div>
+
+    <p class="required-note"><span>*</span> Required fields</p>
+
+    <form id="leadForm" action="https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Dcb000003d737" method="POST" novalidate>
+      <input type="hidden" name="oid" value="00Dcb000003d737">
+      <input type="hidden" name="retURL" value="http://www.storecapital.com">
+      <!-- Debug (uncomment to test):
+      <input type="hidden" name="debug" value="1">
+      <input type="hidden" name="debugEmail" value="avnish+store@gokarya.com">
+      -->
+
+      <!-- ── YOUR DETAILS ── -->
+      <div class="section-title">Your Details</div>
+
+      <div class="row">
+        <div class="field">
+          <label for="first_name">First Name <span class="req">*</span></label>
+          <input id="first_name" name="first_name" maxlength="40" type="text"
+            placeholder="Jane" autocomplete="given-name" required>
+          <span class="error-msg">First name is required.</span>
+        </div>
+        <div class="field">
+          <label for="last_name">Last Name <span class="req">*</span></label>
+          <input id="last_name" name="last_name" maxlength="80" type="text"
+            placeholder="Smith" autocomplete="family-name" required>
+          <span class="error-msg">Last name is required.</span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="company">Company <span class="req">*</span></label>
+        <input id="company" name="company" maxlength="40" type="text"
+          placeholder="Acme Corp" autocomplete="organization" required>
+        <span class="error-msg">Company name is required.</span>
+      </div>
+
+      <div class="field">
+        <label for="title">Title <span class="req">*</span></label>
+        <input id="title" name="title" maxlength="40" type="text"
+          placeholder="CEO" autocomplete="organization-title" required>
+        <span class="error-msg">Title is required.</span>
+      </div>
+
+      <div class="field">
+        <label for="email">Email <span class="req">*</span></label>
+        <input id="email" name="email" maxlength="80" type="email"
+          placeholder="jane@company.com" autocomplete="email" inputmode="email" required
+          pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}">
+        <span class="error-msg">Enter a valid email address.</span>
+      </div>
+
+      <div class="field">
+        <label for="phone">Phone <span class="req">*</span></label>
+        <input id="phone" name="phone" maxlength="14" type="tel"
+          placeholder="(602) 555-0100" autocomplete="tel" inputmode="numeric" required
+          pattern="\(\d{3}\) \d{3}-\d{4}">
+        <span class="error-msg">Enter a valid 10-digit phone number.</span>
+      </div>
+
+      <!-- ── PROPERTY DETAILS ── -->
+      <div class="divider"></div>
+      <div class="section-title">Property Details</div>
+
+      <!-- Street → 00Ncb00000NQyHp -->
+      <div class="field">
+        <label for="street">Street Address <span class="req">*</span></label>
+        <input id="street" name="00Ncb00000NQyHp" maxlength="255" type="text"
+          placeholder="123 Main St" autocomplete="street-address" required>
+        <span class="error-msg">Street address is required.</span>
+      </div>
+
+      <!-- City → 00Ncb00000NQyWL -->
+      <div class="field">
+        <label for="city">City <span class="req">*</span></label>
+        <input id="city" name="00Ncb00000NQyWL" maxlength="40" type="text"
+          placeholder="Phoenix" autocomplete="address-level2" required>
+        <span class="error-msg">City is required.</span>
+      </div>
+
+      <div class="row">
+        <!-- State Code → 00Ncb00000NQymT -->
+        <div class="field">
+          <label for="state_code">State <span class="req">*</span></label>
+          <input id="state_code" name="00Ncb00000NQymT" maxlength="2" type="text"
+            placeholder="AZ" autocomplete="address-level1" required
+            pattern="[A-Za-z]{2}">
+          <span class="error-msg">Use 2-letter code (e.g. AZ).</span>
+        </div>
+
+        <!-- ZIP Code → 00Ncb00000NQT4R -->
+        <div class="field">
+          <label for="zip">ZIP Code <span class="req">*</span></label>
+          <input id="zip" name="00Ncb00000NQT4R" maxlength="10" type="text"
+            placeholder="85001" autocomplete="postal-code" inputmode="numeric" required
+            pattern="\d{5}(-\d{4})?">
+          <span class="error-msg">Enter a valid 5-digit ZIP.</span>
+        </div>
+      </div>
+
+      <!-- Country → 00Ncb00000NQzH7 (hidden, defaulted to US) -->
+      <input type="hidden" id="country" name="00Ncb00000NQzH7" value="US">
+
+      <!-- Form Submitted checkbox → auto-checked on submit -->
+      <input type="hidden" id="00Ncb00000ODL42" name="00Ncb00000ODL42" value="1">
+
+      <!-- Square Footage → 00NE0000000Sehx (optional) -->
+      <div class="field">
+        <label for="sq_footage">Property Square Footage</label>
+        <input id="sq_footage" name="00NE0000000Sehx" maxlength="20" type="text"
+          placeholder="e.g. 12500" inputmode="numeric">
+      </div>
+
+      <input class="submit-btn" type="submit" value="Request My Free Valuation →">
+    </form>
+
+    <p class="privacy">No obligation. Your information is kept private and secure.</p>
+  </div>
+
+  <script>
+    // ── Phone formatter ───────────────────────────────────────────────────
+    const phoneInput = document.getElementById('phone');
+    phoneInput.addEventListener('input', function () {
+      let d = this.value.replace(/\D/g, '').slice(0, 10);
+      this.value = d.length === 0 ? '' :
+                   d.length <= 3 ? '(' + d :
+                   d.length <= 6 ? '(' + d.slice(0,3) + ') ' + d.slice(3) :
+                   '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6);
+    });
+    phoneInput.addEventListener('keydown', function (e) {
+      const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'];
+      if (!ok.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
+    });
+
+    // ── State: letters only, max 2, uppercase ────────────────────────────
+    const stateInput = document.getElementById('state_code');
+    stateInput.addEventListener('keydown', function(e) {
+      const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End'];
+      if (!ok.includes(e.key) && !/^[a-zA-Z]$/.test(e.key)) e.preventDefault();
+    });
+    stateInput.addEventListener('input', function() {
+      this.value = this.value.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase();
+    });
+
+    // ── ZIP: digits and hyphen only ───────────────────────────────────────
+    document.getElementById('zip').addEventListener('keydown', function(e) {
+      const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End','-'];
+      if (!ok.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
+    });
+
+    // ── Square footage: digits and comma only ─────────────────────────────
+    document.getElementById('sq_footage').addEventListener('keydown', function(e) {
+      const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End',','];
+      if (!ok.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
+    });
+
+    // ── Show errors after blur ────────────────────────────────────────────
+    document.querySelectorAll('input[required], input[pattern]').forEach(function(input) {
+      input.addEventListener('blur', function() { this.classList.add('touched'); });
+    });
+
+    // ── Validate all on submit ────────────────────────────────────────────
+    document.getElementById('leadForm').addEventListener('submit', function(e) {
+      let valid = true;
+      this.querySelectorAll('input[required]').forEach(function(input) {
+        input.classList.add('touched');
+        if (!input.checkValidity()) valid = false;
+      });
+      if (!valid) {
+        e.preventDefault();
+        const first = document.querySelector('input.touched:invalid');
+        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+    });
+  </script>
+</body>
+</html>
