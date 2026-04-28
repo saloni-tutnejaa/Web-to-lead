@@ -78,9 +78,8 @@
     .error-msg { font-size: 10px; color: #c0392b; margin-top: 4px; min-height: 14px; display: none; }
     input.touched:invalid + .error-msg { display: block; }
 
-    /* State field uppercase */
-    #state_code { text-transform: uppercase; }
-    #state_code::placeholder { text-transform: none; font-weight: 300; }
+    #state_code, #Headquartered_State__c { text-transform: uppercase; }
+    #state_code::placeholder, #Headquartered_State__c::placeholder { text-transform: none; font-weight: 300; }
 
     .divider { height: 1px; background: #e8eef2; margin: 4px 0 20px; }
 
@@ -117,6 +116,14 @@
     <form id="leadForm" action="https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Dcb000003d737" method="POST" novalidate>
       <input type="hidden" name="oid" value="00Dcb000003d737">
       <input type="hidden" name="retURL" value="http://www.storecapital.com">
+
+      <!--
+        Form_Submitted__c starts as 0.
+        JavaScript sets it to 1 only when submit button is clicked.
+        This prevents it being set to true if tab is closed or page is visited without submitting.
+      -->
+      <input type="hidden" name="Form_Submitted__c" id="formSubmittedField" value="0">
+
       <!-- Debug (uncomment to test):
       <input type="hidden" name="debug" value="1">
       <input type="hidden" name="debugEmail" value="avnish+store@gokarya.com">
@@ -191,7 +198,7 @@
       </div>
 
       <div class="row">
-        <!-- State Code → 00Ncb00000NQymT -->
+        <!-- State → 00Ncb00000NQymT -->
         <div class="field">
           <label for="state_code">State <span class="req">*</span></label>
           <input id="state_code" name="00Ncb00000NQymT" maxlength="2" type="text"
@@ -200,7 +207,7 @@
           <span class="error-msg">Use 2-letter code (e.g. AZ).</span>
         </div>
 
-        <!-- ZIP Code → 00Ncb00000NQT4R -->
+        <!-- ZIP → 00Ncb00000NQT4R -->
         <div class="field">
           <label for="zip">ZIP Code <span class="req">*</span></label>
           <input id="zip" name="00Ncb00000NQT4R" maxlength="10" type="text"
@@ -211,10 +218,7 @@
       </div>
 
       <!-- Country → 00Ncb00000NQzH7 (hidden, defaulted to US) -->
-      <input type="hidden" id="country" name="00Ncb00000NQzH7" value="US">
-
-      <!-- Form Submitted checkbox → auto-checked on submit -->
-      <input type="hidden" id="00Ncb00000ODL42" name="00Ncb00000ODL42" value="1">
+      <input type="hidden" name="00Ncb00000NQzH7" value="US">
 
       <!-- Square Footage → 00NE0000000Sehx (optional) -->
       <div class="field">
@@ -223,13 +227,35 @@
           placeholder="e.g. 12500" inputmode="numeric">
       </div>
 
-      <input class="submit-btn" type="submit" value="Request My Free Valuation →">
+      <button type="submit" class="submit-btn">Request My Free Valuation →</button>
     </form>
 
     <p class="privacy">No obligation. Your information is kept private and secure.</p>
   </div>
 
   <script>
+    // ── Set Form_Submitted__c = 1 ONLY on actual submit click ─────────────
+    // This prevents it being set when tab is closed or page is just visited
+    document.getElementById('leadForm').addEventListener('submit', function(e) {
+      let valid = true;
+
+      // Validate all required fields first
+      this.querySelectorAll('input[required]').forEach(function(input) {
+        input.classList.add('touched');
+        if (!input.checkValidity()) valid = false;
+      });
+
+      if (!valid) {
+        e.preventDefault();
+        const first = document.querySelector('input.touched:invalid');
+        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // Only set to 1 if form is actually valid and being submitted
+      document.getElementById('formSubmittedField').value = '1';
+    });
+
     // ── Phone formatter ───────────────────────────────────────────────────
     const phoneInput = document.getElementById('phone');
     phoneInput.addEventListener('input', function () {
@@ -244,14 +270,17 @@
       if (!ok.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
     });
 
-    // ── State: letters only, max 2, uppercase ────────────────────────────
-    const stateInput = document.getElementById('state_code');
-    stateInput.addEventListener('keydown', function(e) {
-      const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End'];
-      if (!ok.includes(e.key) && !/^[a-zA-Z]$/.test(e.key)) e.preventDefault();
-    });
-    stateInput.addEventListener('input', function() {
-      this.value = this.value.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase();
+    // ── State: letters only, max 2, uppercase ─────────────────────────────
+    ['state_code'].forEach(function(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.addEventListener('keydown', function(e) {
+        const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End'];
+        if (!ok.includes(e.key) && !/^[a-zA-Z]$/.test(e.key)) e.preventDefault();
+      });
+      el.addEventListener('input', function() {
+        this.value = this.value.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase();
+      });
     });
 
     // ── ZIP: digits and hyphen only ───────────────────────────────────────
@@ -260,29 +289,9 @@
       if (!ok.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
     });
 
-    // ── Square footage: digits and comma only ─────────────────────────────
-    document.getElementById('sq_footage').addEventListener('keydown', function(e) {
-      const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End',','];
-      if (!ok.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
-    });
-
     // ── Show errors after blur ────────────────────────────────────────────
     document.querySelectorAll('input[required], input[pattern]').forEach(function(input) {
       input.addEventListener('blur', function() { this.classList.add('touched'); });
-    });
-
-    // ── Validate all on submit ────────────────────────────────────────────
-    document.getElementById('leadForm').addEventListener('submit', function(e) {
-      let valid = true;
-      this.querySelectorAll('input[required]').forEach(function(input) {
-        input.classList.add('touched');
-        if (!input.checkValidity()) valid = false;
-      });
-      if (!valid) {
-        e.preventDefault();
-        const first = document.querySelector('input.touched:invalid');
-        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
     });
   </script>
 </body>
