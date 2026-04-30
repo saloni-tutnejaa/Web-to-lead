@@ -37,7 +37,6 @@
       .card { border-radius: 0; box-shadow: none; padding: 24px 20px; min-height: 100vh; }
     }
 
-    /* ── Logo ── */
     .logo-area {
       margin-bottom: 24px;
       padding-bottom: 20px;
@@ -46,7 +45,6 @@
     }
     .logo-area img { height: 48px; width: auto; max-width: 100%; }
 
-    /* ── Hero banner ── */
     .hero {
       background: #003B5C;
       border-radius: 3px;
@@ -57,35 +55,17 @@
     .hero h1 { font-size: clamp(16px, 4vw, 20px); font-weight: 900; color: #ffffff; letter-spacing: 0.3px; margin-bottom: 6px; line-height: 1.3; }
     .hero p { font-size: 13px; font-weight: 300; color: #a8c0d0; line-height: 1.5; }
 
-    /* ── Form area — explicitly white ── */
-    .form-area {
-      background: #ffffff;
-    }
+    .form-area { background: #ffffff; }
 
-    .section-title {
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: #967126;
-      margin-bottom: 14px;
-    }
+    .section-title { font-size: 10px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: #967126; margin-bottom: 14px; }
 
     .row { display: flex; gap: 14px; }
     @media (max-width: 480px) {
       .row { flex-direction: column; gap: 0; }
     }
 
-    .field {
-      display: flex;
-      flex-direction: column;
-      margin-bottom: 16px;
-      flex: 1;
-      position: relative;
-      background: #ffffff;
-    }
+    .field { display: flex; flex-direction: column; margin-bottom: 16px; flex: 1; position: relative; background: #ffffff; }
 
-    /* ── Labels — always dark ── */
     label {
       font-size: 11px !important;
       font-weight: 500 !important;
@@ -114,7 +94,6 @@
       margin-left: 4px;
     }
 
-    /* ── Inputs ── */
     input[type="text"],
     input[type="email"],
     input[type="tel"] {
@@ -161,7 +140,6 @@
 
     .divider { height: 1px; background: #e8eef2; margin: 4px 0 20px; }
 
-    /* ── Submit button ── */
     .submit-btn {
       width: 100%; padding: 16px; background: #967126; color: #fff;
       font-family: 'DM Sans', Arial, sans-serif; font-size: 14px; font-weight: 500;
@@ -173,10 +151,10 @@
     .submit-btn:active { background: #5e4717; transform: scale(0.99); }
 
     .privacy { text-align: center; font-size: 11px; font-weight: 300; color: #9ca3af; margin-top: 16px; line-height: 1.5; }
-
     .required-note { font-size: 11px; color: #9ca3af; margin-bottom: 18px; }
     .required-note span { color: #967126; }
 
+    
   </style>
 </head>
 <body>
@@ -201,10 +179,7 @@
         <input type="hidden" name="retURL" value="http://www.storecapital.com">
         <input type="hidden" name="Form_Submitted__c" value="1">
         <input type="hidden" name="Lead_ID_Ref__c" id="lead_id_ref">
-        <!-- Debug:
-        <input type="hidden" name="debug" value="1">
-        <input type="hidden" name="debugEmail" value="avnish+store@gokarya.com">
-        -->
+       
 
         <div class="section-title">Your Details</div>
 
@@ -302,16 +277,17 @@
 
       <p class="privacy">No obligation. Your information is kept private and secure.</p>
 
-    </div><!-- /form-area -->
-  </div><!-- /card -->
+    </div>
+  </div>
 
   <script>
-    const params = new URLSearchParams(window.location.search);
+    const params   = new URLSearchParams(window.location.search);
     let anyPrefilled = false;
 
+    // ── Helper: prefill a field by element ID from a URL param ───────────
     function prefill(id, paramName) {
       const value = params.get(paramName);
-      const el = document.getElementById(id);
+      const el    = document.getElementById(id);
       if (el && value && value.trim() !== '') {
         el.value = decodeURIComponent(value);
         el.classList.add('prefilled');
@@ -319,13 +295,24 @@
       }
     }
 
-    // Lead ID hidden field
-    const leadId = params.get('id');
-    if (leadId) document.getElementById('lead_id_ref').value = leadId;
+    // ── Helper: format 10 digits to (XXX) XXX-XXXX ───────────────────────
+    function formatPhone(digits) {
+      var d = digits.replace(/\D/g, '').slice(0, 10);
+      if (d.length === 0)      return '';
+      if (d.length <= 3)       return '(' + d;
+      if (d.length <= 6)       return '(' + d.slice(0,3) + ') ' + d.slice(3);
+      return '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6);
+    }
 
-    // Email — prefill AND lock
-    const emailVal = params.get('email');
-    const emailInput = document.getElementById('email');
+    // ── 1. Lead ID hidden field ───────────────────────────────────────────
+    var leadId = params.get('id');
+    if (leadId) {
+      document.getElementById('lead_id_ref').value = leadId;
+    }
+
+    // ── 2. Email — prefill AND lock ───────────────────────────────────────
+    var emailVal   = params.get('email');
+    var emailInput = document.getElementById('email');
     if (emailVal && emailVal.trim() !== '') {
       emailInput.value = decodeURIComponent(emailVal);
       emailInput.classList.add('prefilled', 'locked');
@@ -334,69 +321,69 @@
       anyPrefilled = true;
     }
 
-    // Other fields — prefill, keep editable
+    // ── 3. Other fields — prefill, keep editable ──────────────────────────
     prefill('first_name', 'first_name');
     prefill('last_name',  'last_name');
     prefill('company',    'company');
     prefill('title',      'title');
 
-    // Phone — prefill with formatter
-    const phoneVal = params.get('phone');
-    const phoneInput = document.getElementById('phone');
+    // ── 4. Phone — prefill with formatting ───────────────────────────────
+    var phoneVal   = params.get('phone');
+    var phoneInput = document.getElementById('phone');
     if (phoneVal && phoneVal.trim() !== '') {
-      let d = decodeURIComponent(phoneVal).replace(/\D/g, '').slice(0, 10);
-      phoneInput.value = d.length === 0 ? '' :
-        d.length <= 3 ? '(' + d :
-        d.length <= 6 ? '(' + d.slice(0,3) + ') ' + d.slice(3) :
-        '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6);
-      phoneInput.classList.add('prefilled');
-      anyPrefilled = true;
+      // Apex already sends clean digits — just format
+      var formatted = formatPhone(decodeURIComponent(phoneVal));
+      if (formatted !== '') {
+        phoneInput.value = formatted;
+        phoneInput.classList.add('prefilled');
+        anyPrefilled = true;
+      }
     }
 
-    // Show prefill notice
+    // ── 5. Show prefill notice ────────────────────────────────────────────
     if (anyPrefilled) {
       document.getElementById('prefillNotice').classList.add('visible');
     }
 
-    // Phone formatter
+    // ── Phone input formatter ─────────────────────────────────────────────
     phoneInput.addEventListener('input', function () {
-      let d = this.value.replace(/\D/g, '').slice(0, 10);
-      this.value = d.length === 0 ? '' :
-        d.length <= 3 ? '(' + d :
-        d.length <= 6 ? '(' + d.slice(0,3) + ') ' + d.slice(3) :
-        '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6);
+      this.value = formatPhone(this.value);
     });
+
     phoneInput.addEventListener('keydown', function (e) {
-      const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'];
+      var ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight',
+                'ArrowUp','ArrowDown','Home','End'];
       if (!ok.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
     });
 
-    // State: letters only, max 2, uppercase
-    const stateInput = document.getElementById('state_code');
+    // ── State: letters only, max 2, uppercase ────────────────────────────
+    var stateInput = document.getElementById('state_code');
     stateInput.addEventListener('keydown', function(e) {
-      const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End'];
+      var ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End'];
       if (!ok.includes(e.key) && !/^[a-zA-Z]$/.test(e.key)) e.preventDefault();
     });
     stateInput.addEventListener('input', function() {
       this.value = this.value.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase();
     });
 
-    // ZIP: digits and hyphen only
+    // ── ZIP: digits and hyphen only ───────────────────────────────────────
     document.getElementById('zip').addEventListener('keydown', function(e) {
-      const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End','-'];
+      var ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End','-'];
       if (!ok.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
     });
 
-    // Show errors after blur (skip locked)
+    // ── Show errors after blur (skip locked) ─────────────────────────────
     document.querySelectorAll('input[required], input[pattern]').forEach(function(input) {
       if (!input.classList.contains('locked')) {
-        input.addEventListener('blur', function() { this.classList.add('touched'); });
+        input.addEventListener('blur', function() {
+          this.classList.add('touched');
+        });
       }
     });
 
-    // Validate on submit
+    // ── Validate on submit ────────────────────────────────────────────────
     document.getElementById('leadForm').addEventListener('submit', function(e) {
-      let valid = true;
+      var valid = true;
       this.querySelectorAll('input[required]').forEach(function(input) {
         if (!input.classList.contains('locked')) {
           input.classList.add('touched');
@@ -405,7 +392,7 @@
       });
       if (!valid) {
         e.preventDefault();
-        const first = document.querySelector('input.touched:invalid:not(.locked)');
+        var first = document.querySelector('input.touched:invalid:not(.locked)');
         if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     });
