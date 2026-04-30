@@ -19,45 +19,93 @@
       padding: 24px 16px;
     }
 
+    @media (max-width: 480px) {
+      body { padding: 0; }
+    }
+
     .card {
-      background: #fff;
+      background: #ffffff !important;
       border-radius: 4px;
       box-shadow: 0 2px 20px rgba(0,59,92,0.10);
       padding: 36px 32px;
       width: 100%;
       max-width: 520px;
+      color: #111827;
     }
 
     @media (max-width: 480px) {
-      body { padding: 0; }
       .card { border-radius: 0; box-shadow: none; padding: 24px 20px; min-height: 100vh; }
     }
 
-    .logo-area { margin-bottom: 24px; padding-bottom: 20px; border-bottom: 2px solid #003B5C; }
+    /* ── Logo ── */
+    .logo-area {
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #003B5C;
+      background: #ffffff;
+    }
     .logo-area img { height: 48px; width: auto; max-width: 100%; }
 
-    .hero { background: #003B5C; border-radius: 3px; padding: 18px 20px; margin-bottom: 24px; }
+    /* ── Hero banner ── */
+    .hero {
+      background: #003B5C;
+      border-radius: 3px;
+      padding: 18px 20px;
+      margin-bottom: 24px;
+    }
     .hero-label { font-size: 10px; font-weight: 500; text-transform: uppercase; color: #967126; margin-bottom: 6px; letter-spacing: 1.5px; }
-    .hero h1 { font-size: clamp(16px, 4vw, 20px); font-weight: 900; color: #fff; letter-spacing: 0.3px; margin-bottom: 6px; line-height: 1.3; }
+    .hero h1 { font-size: clamp(16px, 4vw, 20px); font-weight: 900; color: #ffffff; letter-spacing: 0.3px; margin-bottom: 6px; line-height: 1.3; }
     .hero p { font-size: 13px; font-weight: 300; color: #a8c0d0; line-height: 1.5; }
 
-    .section-title { font-size: 10px; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; color: #967126; margin-bottom: 14px; }
+    /* ── Form area — explicitly white ── */
+    .form-area {
+      background: #ffffff;
+    }
+
+    .section-title {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #967126;
+      margin-bottom: 14px;
+    }
 
     .row { display: flex; gap: 14px; }
     @media (max-width: 480px) {
       .row { flex-direction: column; gap: 0; }
-      .row .field[style] { max-width: none !important; }
     }
 
-    .field { display: flex; flex-direction: column; margin-bottom: 16px; flex: 1; position: relative; }
+    .field {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 16px;
+      flex: 1;
+      position: relative;
+      background: #ffffff;
+    }
 
-    label { font-size: 11px; font-weight: 500; color: #003B5C; margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; gap: 4px; }
-    label .req { color: #967126; margin-left: 2px; }
-    label .verified-badge {
+    /* ── Labels — always dark ── */
+    label {
+      font-size: 11px !important;
+      font-weight: 500 !important;
+      color: #003B5C !important;
+      margin-bottom: 6px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: transparent;
+    }
+
+    label .req { color: #967126 !important; margin-left: 2px; }
+
+    .verified-badge {
       display: none;
       font-size: 9px;
       background: #967126;
-      color: #fff;
+      color: #fff !important;
       padding: 2px 6px;
       border-radius: 10px;
       letter-spacing: 0.5px;
@@ -66,6 +114,7 @@
       margin-left: 4px;
     }
 
+    /* ── Inputs ── */
     input[type="text"],
     input[type="email"],
     input[type="tel"] {
@@ -83,14 +132,12 @@
       -webkit-appearance: none;
     }
 
-    /* Prefilled — editable */
     input.prefilled {
       background: #f0f7ff;
       border-color: #a8c4dd;
       color: #003B5C;
     }
 
-    /* Locked — email verified */
     input.locked {
       background: #e8f0f5;
       border-color: #a8c4dd;
@@ -102,24 +149,19 @@
     input:focus { border-color: #003B5C; box-shadow: 0 0 0 3px rgba(0,59,92,0.08); background: #fff; }
     input.touched:valid { border-color: #2e7d52; background: #f6fdf9; }
     input.touched:invalid { border-color: #c0392b; background: #fdf6f6; box-shadow: 0 0 0 3px rgba(192,57,43,0.07); }
-
-    /* Locked field overrides valid/invalid styling */
     input.locked.touched:valid,
-    input.locked.touched:invalid {
-      border-color: #a8c4dd;
-      background: #e8f0f5;
-      box-shadow: none;
-    }
+    input.locked.touched:invalid { border-color: #a8c4dd; background: #e8f0f5; box-shadow: none; }
 
     .error-msg { font-size: 10px; color: #c0392b; margin-top: 4px; min-height: 14px; display: none; }
     input.touched:invalid + .error-msg { display: block; }
-    input.locked.touched:invalid + .error-msg { display: none; }
+    input.locked + .error-msg { display: none !important; }
 
     #state_code { text-transform: uppercase; }
     #state_code::placeholder { text-transform: none; font-weight: 300; }
 
     .divider { height: 1px; background: #e8eef2; margin: 4px 0 20px; }
 
+    /* ── Submit button ── */
     .submit-btn {
       width: 100%; padding: 16px; background: #967126; color: #fff;
       font-family: 'DM Sans', Arial, sans-serif; font-size: 14px; font-weight: 500;
@@ -131,22 +173,10 @@
     .submit-btn:active { background: #5e4717; transform: scale(0.99); }
 
     .privacy { text-align: center; font-size: 11px; font-weight: 300; color: #9ca3af; margin-top: 16px; line-height: 1.5; }
+
     .required-note { font-size: 11px; color: #9ca3af; margin-bottom: 18px; }
     .required-note span { color: #967126; }
 
-    /* Prefill notice banner */
-    .prefill-notice {
-      display: none;
-      background: #e8f4fd;
-      border: 1px solid #a8c4dd;
-      border-radius: 6px;
-      padding: 10px 14px;
-      font-size: 12px;
-      color: #003B5C;
-      margin-bottom: 20px;
-      line-height: 1.5;
-    }
-    .prefill-notice.visible { display: block; }
   </style>
 </head>
 <body>
@@ -160,125 +190,127 @@
       <div class="hero-label">Limited Time Offer</div>
       <h1>Get Your Free Property Valuation</h1>
       <p>Find out what your commercial property is worth. Our team will provide a no-obligation valuation within 48 hours.</p>
+    </div>
 
-    <p class="required-note"><span>*</span> Required fields</p>
+    <div class="form-area">
 
-    <form id="leadForm" action="https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Dcb000003d737" method="POST" novalidate>
-      <input type="hidden" name="oid" value="00Dcb000003d737">
-      <input type="hidden" name="retURL" value="http://www.storecapital.com">
-      <input type="hidden" name="Form_Submitted__c" value="1">
-      <input type="hidden" name="Lead_ID_Ref__c" id="lead_id_ref">
+      <p class="required-note"><span>*</span> Required fields</p>
 
-      <!-- Debug (uncomment to test):
-      <input type="hidden" name="debug" value="1">
-      <input type="hidden" name="debugEmail" value="avnish+store@gokarya.com">
-      -->
+      <form id="leadForm" action="https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Dcb000003d737" method="POST" novalidate>
+        <input type="hidden" name="oid" value="00Dcb000003d737">
+        <input type="hidden" name="retURL" value="http://www.storecapital.com">
+        <input type="hidden" name="Form_Submitted__c" value="1">
+        <input type="hidden" name="Lead_ID_Ref__c" id="lead_id_ref">
+        <!-- Debug:
+        <input type="hidden" name="debug" value="1">
+        <input type="hidden" name="debugEmail" value="avnish+store@gokarya.com">
+        -->
 
-      <!-- ── YOUR DETAILS ── -->
-      <div class="section-title">Your Details</div>
+        <div class="section-title">Your Details</div>
 
-      <div class="row">
-        <div class="field">
-          <label for="first_name">First Name <span class="req">*</span></label>
-          <input id="first_name" name="first_name" maxlength="40" type="text"
-            placeholder="Jane" autocomplete="given-name" required>
-          <span class="error-msg">First name is required.</span>
+        <div class="row">
+          <div class="field">
+            <label for="first_name">First Name <span class="req">*</span></label>
+            <input id="first_name" name="first_name" maxlength="40" type="text"
+              placeholder="Jane" autocomplete="given-name" required>
+            <span class="error-msg">First name is required.</span>
+          </div>
+          <div class="field">
+            <label for="last_name">Last Name <span class="req">*</span></label>
+            <input id="last_name" name="last_name" maxlength="80" type="text"
+              placeholder="Smith" autocomplete="family-name" required>
+            <span class="error-msg">Last name is required.</span>
+          </div>
         </div>
+
         <div class="field">
-          <label for="last_name">Last Name <span class="req">*</span></label>
-          <input id="last_name" name="last_name" maxlength="80" type="text"
-            placeholder="Smith" autocomplete="family-name" required>
-          <span class="error-msg">Last name is required.</span>
+          <label for="company">Company <span class="req">*</span></label>
+          <input id="company" name="company" maxlength="40" type="text"
+            placeholder="Acme Corp" autocomplete="organization" required>
+          <span class="error-msg">Company name is required.</span>
         </div>
-      </div>
 
-      <div class="field">
-        <label for="company">Company <span class="req">*</span></label>
-        <input id="company" name="company" maxlength="40" type="text"
-          placeholder="Acme Corp" autocomplete="organization" required>
-        <span class="error-msg">Company name is required.</span>
-      </div>
-
-      <div class="field">
-        <label for="title">Title <span class="req">*</span></label>
-        <input id="title" name="title" maxlength="40" type="text"
-          placeholder="CEO" autocomplete="organization-title" required>
-        <span class="error-msg">Title is required.</span>
-      </div>
-
-      <div class="field">
-        <label for="email">
-          Email <span class="req">*</span>
-          <span class="verified-badge" id="verifiedBadge">● Verified</span>
-        </label>
-        <input id="email" name="email" maxlength="80" type="email"
-          placeholder="jane@company.com" autocomplete="email" inputmode="email" required
-          pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}">
-        <span class="error-msg">Enter a valid email address.</span>
-      </div>
-
-      <div class="field">
-        <label for="phone">Phone <span class="req">*</span></label>
-        <input id="phone" name="phone" maxlength="14" type="tel"
-          placeholder="(602) 555-0100" autocomplete="tel" inputmode="numeric" required
-          pattern="\(\d{3}\) \d{3}-\d{4}">
-        <span class="error-msg">Enter a valid 10-digit phone number.</span>
-      </div>
-
-      <!-- ── PROPERTY DETAILS ── -->
-      <div class="divider"></div>
-      <div class="section-title">Property Details</div>
-
-      <div class="field">
-        <label for="street">Street Address <span class="req">*</span></label>
-        <input id="street" name="00Ncb00000NQyHp" maxlength="255" type="text"
-          placeholder="123 Main St" autocomplete="street-address" required>
-        <span class="error-msg">Street address is required.</span>
-      </div>
-
-      <div class="field">
-        <label for="city">City <span class="req">*</span></label>
-        <input id="city" name="00Ncb00000NQyWL" maxlength="40" type="text"
-          placeholder="Phoenix" autocomplete="address-level2" required>
-        <span class="error-msg">City is required.</span>
-      </div>
-
-      <div class="row">
         <div class="field">
-          <label for="state_code">State <span class="req">*</span></label>
-          <input id="state_code" name="00Ncb00000NQymT" maxlength="2" type="text"
-            placeholder="AZ" autocomplete="address-level1" required pattern="[A-Za-z]{2}">
-          <span class="error-msg">Use 2-letter code (e.g. AZ).</span>
+          <label for="title">Title <span class="req">*</span></label>
+          <input id="title" name="title" maxlength="40" type="text"
+            placeholder="CEO" autocomplete="organization-title" required>
+          <span class="error-msg">Title is required.</span>
         </div>
+
         <div class="field">
-          <label for="zip">ZIP Code <span class="req">*</span></label>
-          <input id="zip" name="00Ncb00000NQT4R" maxlength="10" type="text"
-            placeholder="85001" autocomplete="postal-code" inputmode="numeric" required
-            pattern="\d{5}(-\d{4})?">
-          <span class="error-msg">Enter a valid 5-digit ZIP.</span>
+          <label for="email">
+            Email <span class="req">*</span>
+            <span class="verified-badge" id="verifiedBadge">● Verified</span>
+          </label>
+          <input id="email" name="email" maxlength="80" type="email"
+            placeholder="jane@company.com" autocomplete="email" inputmode="email" required
+            pattern="[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}">
+          <span class="error-msg">Enter a valid email address.</span>
         </div>
-      </div>
 
-      <input type="hidden" name="00Ncb00000NQzH7" value="US">
+        <div class="field">
+          <label for="phone">Phone <span class="req">*</span></label>
+          <input id="phone" name="phone" maxlength="14" type="tel"
+            placeholder="(602) 555-0100" autocomplete="tel" inputmode="numeric" required
+            pattern="\(\d{3}\) \d{3}-\d{4}">
+          <span class="error-msg">Enter a valid 10-digit phone number.</span>
+        </div>
 
-      <div class="field">
-        <label for="sq_footage">Property Square Footage</label>
-        <input id="sq_footage" name="00NE0000000Sehx" maxlength="20" type="text"
-          placeholder="e.g. 12500" inputmode="numeric">
-      </div>
+        <div class="divider"></div>
+        <div class="section-title">Property Details</div>
 
-      <input class="submit-btn" type="submit" value="Request My Free Valuation →">
-    </form>
+        <div class="field">
+          <label for="street">Street Address <span class="req">*</span></label>
+          <input id="street" name="00Ncb00000NQyHp" maxlength="255" type="text"
+            placeholder="123 Main St" autocomplete="street-address" required>
+          <span class="error-msg">Street address is required.</span>
+        </div>
 
-    <p class="privacy">No obligation. Your information is kept private and secure.</p>
-  </div>
+        <div class="field">
+          <label for="city">City <span class="req">*</span></label>
+          <input id="city" name="00Ncb00000NQyWL" maxlength="40" type="text"
+            placeholder="Phoenix" autocomplete="address-level2" required>
+          <span class="error-msg">City is required.</span>
+        </div>
+
+        <div class="row">
+          <div class="field">
+            <label for="state_code">State <span class="req">*</span></label>
+            <input id="state_code" name="00Ncb00000NQymT" maxlength="2" type="text"
+              placeholder="AZ" autocomplete="address-level1" required pattern="[A-Za-z]{2}">
+            <span class="error-msg">2-letter code (e.g. AZ).</span>
+          </div>
+          <div class="field">
+            <label for="zip">ZIP Code <span class="req">*</span></label>
+            <input id="zip" name="00Ncb00000NQT4R" maxlength="10" type="text"
+              placeholder="85001" autocomplete="postal-code" inputmode="numeric" required
+              pattern="\d{5}(-\d{4})?">
+            <span class="error-msg">Enter a valid 5-digit ZIP.</span>
+          </div>
+        </div>
+
+        <input type="hidden" name="00Ncb00000NQzH7" value="US">
+
+        <div class="field">
+          <label for="sq_footage">Property Square Footage</label>
+          <input id="sq_footage" name="00NE0000000Sehx" maxlength="20" type="text"
+            placeholder="e.g. 12500" inputmode="numeric">
+        </div>
+
+        <input class="submit-btn" type="submit" value="Request My Free Valuation →">
+      </form>
+
+      <p class="privacy">No obligation. Your information is kept private and secure.</p>
+
+    </div><!-- /form-area -->
+  </div><!-- /card -->
 
   <script>
     const params = new URLSearchParams(window.location.search);
     let anyPrefilled = false;
 
-    // ── Helper: prefill a field ───────────────────────────────────────────
-    function prefill(id, value) {
+    function prefill(id, paramName) {
+      const value = params.get(paramName);
       const el = document.getElementById(id);
       if (el && value && value.trim() !== '') {
         el.value = decodeURIComponent(value);
@@ -287,13 +319,11 @@
       }
     }
 
-    // ── 1. Lead ID — carry in hidden field ────────────────────────────────
+    // Lead ID hidden field
     const leadId = params.get('id');
-    if (leadId) {
-      document.getElementById('lead_id_ref').value = leadId;
-    }
+    if (leadId) document.getElementById('lead_id_ref').value = leadId;
 
-    // ── 2. Email — prefill AND lock if value exists ───────────────────────
+    // Email — prefill AND lock
     const emailVal = params.get('email');
     const emailInput = document.getElementById('email');
     if (emailVal && emailVal.trim() !== '') {
@@ -304,13 +334,13 @@
       anyPrefilled = true;
     }
 
-    // ── 3. Other fields — prefill but keep editable ───────────────────────
-    prefill('first_name', params.get('first_name'));
-    prefill('last_name',  params.get('last_name'));
-    prefill('company',    params.get('company'));
-    prefill('title',      params.get('title'));
+    // Other fields — prefill, keep editable
+    prefill('first_name', 'first_name');
+    prefill('last_name',  'last_name');
+    prefill('company',    'company');
+    prefill('title',      'title');
 
-    // ── 4. Phone — prefill with formatter ────────────────────────────────
+    // Phone — prefill with formatter
     const phoneVal = params.get('phone');
     const phoneInput = document.getElementById('phone');
     if (phoneVal && phoneVal.trim() !== '') {
@@ -323,26 +353,25 @@
       anyPrefilled = true;
     }
 
-    // ── 5. Show prefill notice if any field was pre-filled ────────────────
+    // Show prefill notice
     if (anyPrefilled) {
       document.getElementById('prefillNotice').classList.add('visible');
     }
 
-    // ── Phone formatter (only on user input) ─────────────────────────────
+    // Phone formatter
     phoneInput.addEventListener('input', function () {
       let d = this.value.replace(/\D/g, '').slice(0, 10);
       this.value = d.length === 0 ? '' :
-                   d.length <= 3 ? '(' + d :
-                   d.length <= 6 ? '(' + d.slice(0,3) + ') ' + d.slice(3) :
-                   '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6);
+        d.length <= 3 ? '(' + d :
+        d.length <= 6 ? '(' + d.slice(0,3) + ') ' + d.slice(3) :
+        '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6);
     });
-
     phoneInput.addEventListener('keydown', function (e) {
       const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'];
       if (!ok.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
     });
 
-    // ── State: letters only, max 2, uppercase ────────────────────────────
+    // State: letters only, max 2, uppercase
     const stateInput = document.getElementById('state_code');
     stateInput.addEventListener('keydown', function(e) {
       const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End'];
@@ -352,27 +381,23 @@
       this.value = this.value.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase();
     });
 
-    // ── ZIP: digits and hyphen only ───────────────────────────────────────
+    // ZIP: digits and hyphen only
     document.getElementById('zip').addEventListener('keydown', function(e) {
       const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End','-'];
       if (!ok.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
     });
 
-    // ── Show errors after blur ────────────────────────────────────────────
+    // Show errors after blur (skip locked)
     document.querySelectorAll('input[required], input[pattern]').forEach(function(input) {
-      // Skip locked fields
       if (!input.classList.contains('locked')) {
-        input.addEventListener('blur', function() {
-          this.classList.add('touched');
-        });
+        input.addEventListener('blur', function() { this.classList.add('touched'); });
       }
     });
 
-    // ── Validate on submit ────────────────────────────────────────────────
+    // Validate on submit
     document.getElementById('leadForm').addEventListener('submit', function(e) {
       let valid = true;
       this.querySelectorAll('input[required]').forEach(function(input) {
-        // Skip locked fields — they are already valid
         if (!input.classList.contains('locked')) {
           input.classList.add('touched');
           if (!input.checkValidity()) valid = false;
