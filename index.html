@@ -51,17 +51,7 @@
 
     .field { display: flex; flex-direction: column; margin-bottom: 16px; flex: 1; position: relative; }
 
-    label {
-      font-size: 11px;
-      font-weight: 500;
-      color: #003B5C;
-      margin-bottom: 6px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
+    label { font-size: 11px; font-weight: 500; color: #003B5C; margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase; display: flex; align-items: center; gap: 4px; }
     label .req { color: #967126; margin-left: 2px; }
 
     /* Verified badge on email label */
@@ -75,7 +65,6 @@
       letter-spacing: 0.5px;
       font-weight: 500;
       text-transform: uppercase;
-      margin-left: 4px;
     }
 
     input[type="text"],
@@ -95,7 +84,7 @@
       -webkit-appearance: none;
     }
 
-    /* Prefilled — editable, light blue tint */
+    /* Prefilled — editable, highlighted blue */
     input.prefilled {
       background: #f0f7ff;
       border-color: #a8c4dd;
@@ -115,7 +104,7 @@
     input.touched:valid { border-color: #2e7d52; background: #f6fdf9; }
     input.touched:invalid { border-color: #c0392b; background: #fdf6f6; box-shadow: 0 0 0 3px rgba(192,57,43,0.07); }
 
-    /* Locked field — never show valid/invalid colours */
+    /* Locked fields should not show invalid state */
     input.locked.touched:valid,
     input.locked.touched:invalid {
       border-color: #a8c4dd;
@@ -127,6 +116,7 @@
     input.touched:invalid + .error-msg { display: block; }
     input.locked + .error-msg { display: none !important; }
 
+    /* State field uppercase */
     #state_code { text-transform: uppercase; }
     #state_code::placeholder { text-transform: none; font-weight: 300; }
 
@@ -146,7 +136,7 @@
     .required-note { font-size: 11px; color: #9ca3af; margin-bottom: 18px; }
     .required-note span { color: #967126; }
 
-
+  
   </style>
 </head>
 <body>
@@ -162,18 +152,19 @@
       <p>Find out what your commercial property is worth. Our team will provide a no-obligation valuation within 48 hours.</p>
     </div>
 
+   
     <p class="required-note"><span>*</span> Required fields</p>
 
     <form id="leadForm" action="https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Dcb000003d737" method="POST" novalidate>
       <input type="hidden" name="oid" value="00Dcb000003d737">
       <input type="hidden" name="retURL" value="http://www.storecapital.com">
+   
+
+      <!-- Carries original Lead ID from email link -->
       <input type="hidden" name="Lead_ID_Ref__c" id="lead_id_ref">
-      <!-- Form Submitted checkbox -->
-      <input type="hidden" name="00Ncb00000ODL42" value="1">
-      <!-- Debug:
-      <input type="hidden" name="debug" value="1">
-      <input type="hidden" name="debugEmail" value="avnish+store@gokarya.com">
-      -->
+
+      <!-- Form Submitted checkbox — auto-checked on submit -->
+      <input type="hidden" id="00Ncb00000ODL42" name="00Ncb00000ODL42" value="1">
 
       <!-- ── YOUR DETAILS ── -->
       <div class="section-title">Your Details</div>
@@ -230,6 +221,7 @@
       <div class="divider"></div>
       <div class="section-title">Property Details</div>
 
+      <!-- Street → 00Ncb00000NQyHp -->
       <div class="field">
         <label for="street">Street Address <span class="req">*</span></label>
         <input id="street" name="00Ncb00000NQyHp" maxlength="255" type="text"
@@ -237,6 +229,7 @@
         <span class="error-msg">Street address is required.</span>
       </div>
 
+      <!-- City → 00Ncb00000NQyWL -->
       <div class="field">
         <label for="city">City <span class="req">*</span></label>
         <input id="city" name="00Ncb00000NQyWL" maxlength="40" type="text"
@@ -245,12 +238,15 @@
       </div>
 
       <div class="row">
+        <!-- State Code → 00Ncb00000NQymT -->
         <div class="field">
           <label for="state_code">State <span class="req">*</span></label>
           <input id="state_code" name="00Ncb00000NQymT" maxlength="2" type="text"
             placeholder="AZ" autocomplete="address-level1" required pattern="[A-Za-z]{2}">
           <span class="error-msg">Use 2-letter code (e.g. AZ).</span>
         </div>
+
+        <!-- ZIP Code → 00Ncb00000NQT4R -->
         <div class="field">
           <label for="zip">ZIP Code <span class="req">*</span></label>
           <input id="zip" name="00Ncb00000NQT4R" maxlength="10" type="text"
@@ -260,8 +256,10 @@
         </div>
       </div>
 
+      <!-- Country → hidden, defaulted to US -->
       <input type="hidden" name="00Ncb00000NQzH7" value="US">
 
+      <!-- Square Footage → optional -->
       <div class="field">
         <label for="sq_footage">Property Square Footage</label>
         <input id="sq_footage" name="00NE0000000Sehx" maxlength="20" type="text"
@@ -275,10 +273,39 @@
   </div>
 
   <script>
-    // ── URL params prefill ────────────────────────────────────────────────
+
+    // ══════════════════════════════════════════════════════════════════════
+    // PHONE FORMATTER — same logic as your original working version
+    // ══════════════════════════════════════════════════════════════════════
+    const phoneInput = document.getElementById('phone');
+
+    // Reusable format function
+    function applyPhoneFormat(value) {
+      let d = value.replace(/\D/g, '').slice(0, 10);
+      if (d.length === 0)    return '';
+      if (d.length <= 3)     return '(' + d;
+      if (d.length <= 6)     return '(' + d.slice(0,3) + ') ' + d.slice(3);
+      return '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6);
+    }
+
+    // Live typing
+    phoneInput.addEventListener('input', function () {
+      this.value = applyPhoneFormat(this.value);
+    });
+
+    // Block non-numeric keys
+    phoneInput.addEventListener('keydown', function (e) {
+      const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'];
+      if (!ok.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
+    });
+
+    // ══════════════════════════════════════════════════════════════════════
+    // PREFILL FROM URL PARAMETERS
+    // ══════════════════════════════════════════════════════════════════════
     const params = new URLSearchParams(window.location.search);
     let anyPrefilled = false;
 
+    // Helper — prefill a field and highlight it
     function prefillField(id, paramName) {
       const val = params.get(paramName);
       const el  = document.getElementById(id);
@@ -289,11 +316,13 @@
       }
     }
 
-    // Lead ID
+    // 1 — Lead ID into hidden field
     const leadId = params.get('id');
-    if (leadId) document.getElementById('lead_id_ref').value = leadId;
+    if (leadId) {
+      document.getElementById('lead_id_ref').value = leadId;
+    }
 
-    // Email — prefill AND lock
+    // 2 — Email: prefill AND lock
     const emailVal   = params.get('email');
     const emailInput = document.getElementById('email');
     if (emailVal && emailVal.trim() !== '') {
@@ -304,46 +333,32 @@
       anyPrefilled = true;
     }
 
-    // Standard fields — editable
+    // 3 — Other text fields: prefill, keep editable
     prefillField('first_name', 'first_name');
     prefillField('last_name',  'last_name');
     prefillField('company',    'company');
     prefillField('title',      'title');
 
-    // Phone — strip to 10 digits then format using same logic as formatter
-    const phoneVal   = params.get('phone');
-    const phoneInput = document.getElementById('phone');
+    // 4 — Phone: strip non-digits, take first 10, apply formatter
+    const phoneVal = params.get('phone');
     if (phoneVal && phoneVal.trim() !== '') {
-      let d = decodeURIComponent(phoneVal).replace(/\D/g, '').slice(0, 10);
-      if (d.length > 0) {
-        phoneInput.value =
-          d.length <= 3 ? '(' + d :
-          d.length <= 6 ? '(' + d.slice(0,3) + ') ' + d.slice(3) :
-          '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6);
+      const cleaned   = decodeURIComponent(phoneVal).replace(/\D/g, '').slice(0, 10);
+      const formatted = applyPhoneFormat(cleaned);
+      if (formatted !== '') {
+        phoneInput.value = formatted;
         phoneInput.classList.add('prefilled');
         anyPrefilled = true;
       }
     }
 
-    // Show prefill notice
+    // 5 — Show notice if anything was pre-filled
     if (anyPrefilled) {
       document.getElementById('prefillNotice').classList.add('visible');
     }
 
-    // ── Phone formatter (live typing) ────────────────────────────────────
-    phoneInput.addEventListener('input', function () {
-      let d = this.value.replace(/\D/g, '').slice(0, 10);
-      this.value = d.length === 0 ? '' :
-                   d.length <= 3 ? '(' + d :
-                   d.length <= 6 ? '(' + d.slice(0,3) + ') ' + d.slice(3) :
-                   '(' + d.slice(0,3) + ') ' + d.slice(3,6) + '-' + d.slice(6);
-    });
-    phoneInput.addEventListener('keydown', function (e) {
-      const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','ArrowUp','ArrowDown','Home','End'];
-      if (!ok.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
-    });
-
-    // ── State: letters only, max 2, uppercase ────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════
+    // STATE FIELD
+    // ══════════════════════════════════════════════════════════════════════
     const stateInput = document.getElementById('state_code');
     stateInput.addEventListener('keydown', function(e) {
       const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End'];
@@ -353,26 +368,31 @@
       this.value = this.value.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase();
     });
 
-    // ── ZIP: digits and hyphen only ───────────────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════
+    // ZIP FIELD
+    // ══════════════════════════════════════════════════════════════════════
     document.getElementById('zip').addEventListener('keydown', function(e) {
       const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End','-'];
       if (!ok.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
     });
 
-    // ── Square footage: digits and comma only ─────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════
+    // SQUARE FOOTAGE
+    // ══════════════════════════════════════════════════════════════════════
     document.getElementById('sq_footage').addEventListener('keydown', function(e) {
       const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End',','];
       if (!ok.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
     });
 
-    // ── Show errors after blur (skip locked) ─────────────────────────────
+    // ══════════════════════════════════════════════════════════════════════
+    // VALIDATION — show errors after blur, skip locked fields
+    // ══════════════════════════════════════════════════════════════════════
     document.querySelectorAll('input[required], input[pattern]').forEach(function(input) {
       if (!input.classList.contains('locked')) {
         input.addEventListener('blur', function() { this.classList.add('touched'); });
       }
     });
 
-    // ── Validate on submit ────────────────────────────────────────────────
     document.getElementById('leadForm').addEventListener('submit', function(e) {
       let valid = true;
       this.querySelectorAll('input[required]').forEach(function(input) {
@@ -387,6 +407,7 @@
         if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     });
+
   </script>
 </body>
 </html>
