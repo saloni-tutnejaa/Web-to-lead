@@ -71,6 +71,13 @@
       -webkit-appearance: none;
     }
 
+    /* Prefilled field styling */
+    input.prefilled {
+      background: #f0f7ff;
+      border-color: #a8c4dd;
+      color: #003B5C;
+    }
+
     input:focus { border-color: #003B5C; box-shadow: 0 0 0 3px rgba(0,59,92,0.08); background: #fff; }
     input.touched:valid { border-color: #2e7d52; background: #f6fdf9; }
     input.touched:invalid { border-color: #c0392b; background: #fdf6f6; box-shadow: 0 0 0 3px rgba(192,57,43,0.07); }
@@ -78,8 +85,8 @@
     .error-msg { font-size: 10px; color: #c0392b; margin-top: 4px; min-height: 14px; display: none; }
     input.touched:invalid + .error-msg { display: block; }
 
-    #state_code, #Headquartered_State__c { text-transform: uppercase; }
-    #state_code::placeholder, #Headquartered_State__c::placeholder { text-transform: none; font-weight: 300; }
+    #state_code { text-transform: uppercase; }
+    #state_code::placeholder { text-transform: none; font-weight: 300; }
 
     .divider { height: 1px; background: #e8eef2; margin: 4px 0 20px; }
 
@@ -96,6 +103,20 @@
     .privacy { text-align: center; font-size: 11px; font-weight: 300; color: #9ca3af; margin-top: 16px; line-height: 1.5; }
     .required-note { font-size: 11px; color: #9ca3af; margin-bottom: 18px; }
     .required-note span { color: #967126; }
+
+    /* Prefill notice banner */
+    .prefill-notice {
+      display: none;
+      background: #e8f4fd;
+      border: 1px solid #a8c4dd;
+      border-radius: 6px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #003B5C;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .prefill-notice.visible { display: block; }
   </style>
 </head>
 <body>
@@ -111,18 +132,20 @@
       <p>Find out what your commercial property is worth. Our team will provide a no-obligation valuation within 48 hours.</p>
     </div>
 
+    <!-- Shown only when form is pre-filled from email link -->
+    <div class="prefill-notice" id="prefillNotice">
+      ✦ We've pre-filled your details from our records. Feel free to update anything before submitting.
+    </div>
+
     <p class="required-note"><span>*</span> Required fields</p>
 
     <form id="leadForm" action="https://test.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00Dcb000003d737" method="POST" novalidate>
       <input type="hidden" name="oid" value="00Dcb000003d737">
       <input type="hidden" name="retURL" value="http://www.storecapital.com">
+      <input type="hidden" name="Form_Submitted__c" value="1">
 
-      <!--
-        Form_Submitted__c starts as 0.
-        JavaScript sets it to 1 only when submit button is clicked.
-        This prevents it being set to true if tab is closed or page is visited without submitting.
-      -->
-      <input type="hidden" name="Form_Submitted__c" id="formSubmittedField" value="0">
+      <!-- Hidden field to carry Lead ID -->
+      <input type="hidden" name="lead_id_ref" id="lead_id_ref">
 
       <!-- Debug (uncomment to test):
       <input type="hidden" name="debug" value="1">
@@ -181,7 +204,6 @@
       <div class="divider"></div>
       <div class="section-title">Property Details</div>
 
-      <!-- Street → 00Ncb00000NQyHp -->
       <div class="field">
         <label for="street">Street Address <span class="req">*</span></label>
         <input id="street" name="00Ncb00000NQyHp" maxlength="255" type="text"
@@ -189,7 +211,6 @@
         <span class="error-msg">Street address is required.</span>
       </div>
 
-      <!-- City → 00Ncb00000NQyWL -->
       <div class="field">
         <label for="city">City <span class="req">*</span></label>
         <input id="city" name="00Ncb00000NQyWL" maxlength="40" type="text"
@@ -198,16 +219,12 @@
       </div>
 
       <div class="row">
-        <!-- State → 00Ncb00000NQymT -->
         <div class="field">
           <label for="state_code">State <span class="req">*</span></label>
           <input id="state_code" name="00Ncb00000NQymT" maxlength="2" type="text"
-            placeholder="AZ" autocomplete="address-level1" required
-            pattern="[A-Za-z]{2}">
+            placeholder="AZ" autocomplete="address-level1" required pattern="[A-Za-z]{2}">
           <span class="error-msg">Use 2-letter code (e.g. AZ).</span>
         </div>
-
-        <!-- ZIP → 00Ncb00000NQT4R -->
         <div class="field">
           <label for="zip">ZIP Code <span class="req">*</span></label>
           <input id="zip" name="00Ncb00000NQT4R" maxlength="10" type="text"
@@ -217,44 +234,55 @@
         </div>
       </div>
 
-      <!-- Country → 00Ncb00000NQzH7 (hidden, defaulted to US) -->
-      <input type="hidden" name="00Ncb00000NQzH7" value="US">
+      <input type="hidden" id="country" name="00Ncb00000NQzH7" value="US">
 
-      <!-- Square Footage → 00NE0000000Sehx (optional) -->
       <div class="field">
         <label for="sq_footage">Property Square Footage</label>
         <input id="sq_footage" name="00NE0000000Sehx" maxlength="20" type="text"
           placeholder="e.g. 12500" inputmode="numeric">
       </div>
 
-      <button type="submit" class="submit-btn">Request My Free Valuation →</button>
+      <input class="submit-btn" type="submit" value="Request My Free Valuation →">
     </form>
 
     <p class="privacy">No obligation. Your information is kept private and secure.</p>
   </div>
 
   <script>
-    // ── Set Form_Submitted__c = 1 ONLY on actual submit click ─────────────
-    // This prevents it being set when tab is closed or page is just visited
-    document.getElementById('leadForm').addEventListener('submit', function(e) {
-      let valid = true;
+    // ── Read URL parameters and pre-fill form ─────────────────────────────
+    const params = new URLSearchParams(window.location.search);
 
-      // Validate all required fields first
-      this.querySelectorAll('input[required]').forEach(function(input) {
-        input.classList.add('touched');
-        if (!input.checkValidity()) valid = false;
-      });
+    const fieldMap = {
+      'first_name' : 'first_name',
+      'last_name'  : 'last_name',
+      'email'      : 'email',
+      'phone'      : 'phone',
+      'company'    : 'company',
+      'title'      : 'title'
+    };
 
-      if (!valid) {
-        e.preventDefault();
-        const first = document.querySelector('input.touched:invalid');
-        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        return;
+    let anyPrefilled = false;
+
+    Object.keys(fieldMap).forEach(function(param) {
+      const value = params.get(param);
+      const el = document.getElementById(fieldMap[param]);
+      if (value && el) {
+        el.value = decodeURIComponent(value);
+        el.classList.add('prefilled');
+        anyPrefilled = true;
       }
-
-      // Only set to 1 if form is actually valid and being submitted
-      document.getElementById('formSubmittedField').value = '1';
     });
+
+    // Set lead ID hidden field
+    const leadId = params.get('id');
+    if (leadId) {
+      document.getElementById('lead_id_ref').value = leadId;
+    }
+
+    // Show prefill notice if any field was pre-filled
+    if (anyPrefilled) {
+      document.getElementById('prefillNotice').classList.add('visible');
+    }
 
     // ── Phone formatter ───────────────────────────────────────────────────
     const phoneInput = document.getElementById('phone');
@@ -270,17 +298,14 @@
       if (!ok.includes(e.key) && !/^\d$/.test(e.key)) e.preventDefault();
     });
 
-    // ── State: letters only, max 2, uppercase ─────────────────────────────
-    ['state_code'].forEach(function(id) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      el.addEventListener('keydown', function(e) {
-        const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End'];
-        if (!ok.includes(e.key) && !/^[a-zA-Z]$/.test(e.key)) e.preventDefault();
-      });
-      el.addEventListener('input', function() {
-        this.value = this.value.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase();
-      });
+    // ── State: letters only, max 2, uppercase ────────────────────────────
+    const stateInput = document.getElementById('state_code');
+    stateInput.addEventListener('keydown', function(e) {
+      const ok = ['Backspace','Delete','Tab','ArrowLeft','ArrowRight','Home','End'];
+      if (!ok.includes(e.key) && !/^[a-zA-Z]$/.test(e.key)) e.preventDefault();
+    });
+    stateInput.addEventListener('input', function() {
+      this.value = this.value.replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase();
     });
 
     // ── ZIP: digits and hyphen only ───────────────────────────────────────
@@ -292,6 +317,20 @@
     // ── Show errors after blur ────────────────────────────────────────────
     document.querySelectorAll('input[required], input[pattern]').forEach(function(input) {
       input.addEventListener('blur', function() { this.classList.add('touched'); });
+    });
+
+    // ── On submit: validate all ───────────────────────────────────────────
+    document.getElementById('leadForm').addEventListener('submit', function(e) {
+      let valid = true;
+      this.querySelectorAll('input[required]').forEach(function(input) {
+        input.classList.add('touched');
+        if (!input.checkValidity()) valid = false;
+      });
+      if (!valid) {
+        e.preventDefault();
+        const first = document.querySelector('input.touched:invalid');
+        if (first) first.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
     });
   </script>
 </body>
